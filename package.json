@@ -1,5 +1,5 @@
 {
-  "name": "haproxy-remote",
+  "name": "ha-api",
   "version": "0.0.0",
   "description": "HAProxy remote controller",
   "main": "ha-api.js",
@@ -12,5 +12,16 @@
     "start": "node server.js"
   },
   "author": "Yan Corneille",
-  "license": "BSD"
+  "license": "BSD",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Treyone/ha-api.git"
+  },
+  "keywords": [
+    "HAProxy",
+    "REST"
+  ],
+  "bugs": {
+    "url": "https://github.com/Treyone/ha-api/issues"
+  }
 }
