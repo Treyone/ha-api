@@ -21,6 +21,7 @@ or a UNIX local socket :
 {
 	socket : '/tmp/haproxy.sock'
 }
+
 **app** : optional express() instance. If provided, API methods will be added to this isntance. If not, a new express() will be created.
 
 **apiPort** : TCP port to expose the REST API.  
