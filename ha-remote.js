@@ -5,18 +5,6 @@
 var HAproxy = require('./ha-connect'),
     haproxy;
 
-//non-HAProxy related functions
-var checkMandatoryParams = function(params,required,callback){
-    required.map(function(item){
-        if(!params[item]){
-            callback && callback(item+' parameter is missing');
-            return;
-        }
-        return item;
-    });
-
-    callback && callback(null);
-};
 
 var HAFrontend= function(frontendName){
 
@@ -86,7 +74,7 @@ var haRemote = function(socketDefinition){
      */
     var _stats = function(callback){
         var formatLine = function(map){
-            //var types=['frontend','backend','server','socket'];
+
             return function(line){
                 var result={};
                 for(var i=0;i<line.length;i++){
@@ -101,10 +89,21 @@ var haRemote = function(socketDefinition){
          * @param callback
          */
         var organizeStatsObject = function(stats,callback){
+            var types=['frontend','backend','server','socket'];
             var result = {};
             stats.map(function(statsItem){
-                result[statsItem.pxname]=result[statsItem.pxname]||{};
-                result[statsItem.pxname][statsItem.svname]=statsItem;
+                var localType='';
+                if(types[statsItem.type]=='frontend'){
+                    localType='frontend'
+                }
+                else{
+                    localType='backend'
+                }
+                result[localType]=result[localType]||{};
+
+
+                result[localType][statsItem.pxname]=result[localType][statsItem.pxname]||{};
+                result[localType][statsItem.pxname][statsItem.svname]=statsItem;
                 return;
             });
             callback && callback(null,result);

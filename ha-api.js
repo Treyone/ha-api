@@ -5,12 +5,13 @@ var HAApi = function(options){
 
     var HARemote = require('./ha-remote'),
         haremote = this.haremote = new HARemote(options.socket),
+        express = require('express'),
         app;
 
     if(options.app){
         app = options.app;
     }else{
-        var express = require('express');
+
         app = express();
     }
     /**
@@ -21,6 +22,7 @@ var HAApi = function(options){
     var responder = function(res){
         return function(err,obj){
             var response;
+            res.contentType('application/json');
             //there's an error on my side
             if(err){
                 response = JSON.stringify(err);
@@ -34,7 +36,6 @@ var HAApi = function(options){
                 else{
                     //and an error message when he's not.
                     response=JSON.stringify(obj);
-                    res.statusCode=400;
                 }
                 res.send(response);
             }
