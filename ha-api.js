@@ -46,7 +46,7 @@ var HAApi = function(options){
         app.use(express.bodyParser());
     });
 
-    app.get('/backend/:backend/server/:server/:operation',function(req,res){
+    app.post('/backend/:backend/server/:server/:operation',function(req,res){
         switch(req.params.operation){
             case 'disable':{
                 haremote.backend(req.params.backend).server(req.params.server).disable(responder(res));
@@ -66,7 +66,7 @@ var HAApi = function(options){
         haremote.stats(responder(res));
     });
 
-    app.get('/frontend/:frontend/:operation',function(req,res){
+    app.post('/frontend/:frontend/:operation',function(req,res){
         switch(req.params.operation){
             case 'disable':{
                 haremote.frontend(req.params.frontend).disable(responder(res));

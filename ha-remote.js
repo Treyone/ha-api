@@ -72,11 +72,20 @@ var haRemote = function(socketDefinition){
      * @param callback
      * @private
      */
-    var _stats = function(callback){
-        var formatLine = function(map){
+    var _stats = function(options,callback){
+        if(arguments.length==1){
+            callback=arguments[0];
+        }
+        options = options ||{};
+        options.proxyid = options.proxyid||-1;
+        options.serverid = options.serverid||-1;
+        options.types = options.types||5;
 
+
+        var formatLine = function(map){
             return function(line){
                 var result={};
+
                 for(var i=0;i<line.length;i++){
                     result[map[i]]=line[i];
                 }
@@ -101,9 +110,10 @@ var haRemote = function(socketDefinition){
                 }
                 result[localType]=result[localType]||{};
 
-
-                result[localType][statsItem.pxname]=result[localType][statsItem.pxname]||{};
-                result[localType][statsItem.pxname][statsItem.svname]=statsItem;
+                if(statsItem.pxname!==''){
+                    result[localType][statsItem.pxname]=result[localType][statsItem.pxname]||{};
+                    result[localType][statsItem.pxname][statsItem.svname]=statsItem;
+                }
                 return;
             });
             callback && callback(null,result);
@@ -122,20 +132,22 @@ var haRemote = function(socketDefinition){
             callback && callback(result,data);
         };
         /**
-         * transform the HAProxy CSV into a human-readable JSON
+         * Transform the HAProxy CSV into a human-readable JSON
          * @param csv
          * @param callback
          */
         var readCsv = function(csv,callback){
             var tabCsv = csv.split('\n')
                 .map(function(line){return line.split(',')});
+
             getDatamap(tabCsv,function(map,data){
                 var r = data.map(formatLine(map));
                 organizeStatsObject(r,callback);
             });
         };
         //get stats for everything
-        haproxy.send('show stat -1 5 -1',function(err,data){
+        console.log('show stat '+options.proxyid+' '+options.types+' '+options.serverid)
+        haproxy.send('show stat '+options.proxyid+' '+options.types+' '+options.serverid,function(err,data){
             if(err){return(callback && callback(err));}
             readCsv(data,callback);
         });
