@@ -39,6 +39,14 @@ or a UNIX local socket :
 **apiPort** : TCP port to expose the REST API.  
 
 # Operations #
+## Get HAProxy Info ##
+**REST**
+
+	GET /info
+**Javascript**
+
+	haapi.info(callback);
+
 ## Get Stats ##
 **REST**
 

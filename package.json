@@ -1,6 +1,6 @@
 {
   "name": "ha-api",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "HAProxy remote controller",
   "main": "ha-api.js",
   "dependencies": {
