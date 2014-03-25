@@ -66,6 +66,10 @@ var HAApi = function(options){
         haremote.stats(responder(res));
     });
 
+    app.get('/info',function(req,res){
+       haremote.info(responder(res));
+    });
+
     app.post('/frontend/:frontend/:operation',function(req,res){
         switch(req.params.operation){
             case 'disable':{

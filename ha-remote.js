@@ -68,6 +68,28 @@ var HAServer = function(backend){
 var haRemote = function(socketDefinition){
     haproxy = new HAproxy(socketDefinition);
     /**
+     * get HAProxy instance information
+     * @param callback
+     * @private
+     */
+    var _info = function(callback){
+        var formatInfo = function(info,callback){
+            var result={};
+            info = info.split('\n').map(function(line){
+                line = line.split(':');
+                if(line.length==2){
+                    result[line[0].trim()]=line[1].trim();
+                }
+                return;
+            })
+            callback && callback(null,result);
+        }
+        haproxy.send('show info',function(err,data){
+            if(err){return(callback && callback(err));}
+            formatInfo(data, callback);
+        });
+    }
+    /**
      * get proxy stats, in JSON Format
      * @param callback
      * @private
@@ -148,7 +170,9 @@ var haRemote = function(socketDefinition){
         stats : _stats,
         backend : HABackend,
         frontend : HAFrontend,
+        info : _info,
         connector : haproxy
+
     }
 }
 

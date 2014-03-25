@@ -17,9 +17,15 @@ var haConnector = function(socket){
      * @param callback
      */
     var connectToHA = function(callback){
-        var client = net.connect(_socket, function() {
-            callback && callback(null,client);
-        });
+        try{
+            var client = net.connect(_socket, function() {
+                callback && callback(null,client);
+            });
+        }
+        catch(ex){
+            callback && callback(ex);
+        }
+
     };
     /**
      * sends a message to HA, gathers the response and passes it to the callback
