@@ -1,6 +1,6 @@
 {
   "name": "ha-api",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "HAProxy remote controller",
   "main": "ha-api.js",
   "dependencies": {
@@ -19,7 +19,8 @@
   },
   "keywords": [
     "HAProxy",
-    "REST"
+    "REST",
+    "API"
   ],
   "bugs": {
     "url": "https://github.com/Treyone/ha-api/issues"

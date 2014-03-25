@@ -79,7 +79,7 @@ var haRemote = function(socketDefinition){
         options = options ||{};
         options.proxyid = options.proxyid||-1;
         options.serverid = options.serverid||-1;
-        options.types = options.types||5;
+        options.types = options.types||7;
 
 
         var formatLine = function(map){
@@ -101,19 +101,11 @@ var haRemote = function(socketDefinition){
             var types=['frontend','backend','server','socket'];
             var result = {};
             stats.map(function(statsItem){
-                var localType='';
-                if(types[statsItem.type]=='frontend'){
-                    localType='frontend'
-                }
-                else{
-                    localType='backend'
-                }
-                result[localType]=result[localType]||{};
+                if(!statsItem.pxname||statsItem.pxname===''){return};
+                result[statsItem.pxname] = result[statsItem.pxname]||{};
+                result[statsItem.pxname][types[statsItem.type]]=result[statsItem.pxname][types[statsItem.type]]||{};
+                result[statsItem.pxname][types[statsItem.type]][statsItem.svname]=statsItem;
 
-                if(statsItem.pxname!==''){
-                    result[localType][statsItem.pxname]=result[localType][statsItem.pxname]||{};
-                    result[localType][statsItem.pxname][statsItem.svname]=statsItem;
-                }
                 return;
             });
             callback && callback(null,result);
@@ -146,7 +138,6 @@ var haRemote = function(socketDefinition){
             });
         };
         //get stats for everything
-        console.log('show stat '+options.proxyid+' '+options.types+' '+options.serverid)
         haproxy.send('show stat '+options.proxyid+' '+options.types+' '+options.serverid,function(err,data){
             if(err){return(callback && callback(err));}
             readCsv(data,callback);
