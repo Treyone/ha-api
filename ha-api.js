@@ -11,7 +11,6 @@ var HAApi = function(options){
     if(options.app){
         app = options.app;
     }else{
-
         app = express();
     }
     /**

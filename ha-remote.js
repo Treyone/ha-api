@@ -3,7 +3,17 @@
  */
 
 var HAproxy = require('./ha-connect'),
-    haproxy;
+    haproxy,
+    CACHE_TTL = 1000,
+    statCache={
+        updated:null,
+        data:{}
+    },
+    GLOBAL_STATS_OPTIONS = {
+        proxyid : -1,
+        serverid : -1,
+        types : 7
+    };
 
 
 var HAFrontend= function(frontendName){
@@ -95,13 +105,16 @@ var haRemote = function(socketDefinition){
      * @private
      */
     var _stats = function(options,callback){
-        if(arguments.length==1){
+
+        if(arguments.length==1 && typeof(arguments[0])=='function'){
             callback=arguments[0];
+            options={};
         }
+
         options = options ||{};
-        options.proxyid = options.proxyid||-1;
-        options.serverid = options.serverid||-1;
-        options.types = options.types||7;
+        options.proxyid = options.proxyid||GLOBAL_STATS_OPTIONS.proxyid;
+        options.serverid = options.serverid||GLOBAL_STATS_OPTIONS.serverid;
+        options.types =     options.types||GLOBAL_STATS_OPTIONS.types;
 
 
         var formatLine = function(map){
@@ -145,6 +158,27 @@ var haRemote = function(socketDefinition){
             data = data.slice(1);
             callback && callback(result,data);
         };
+
+        /**
+         *
+         * @param raw
+         * @param callback
+         */
+        var filterData = function(raw,callback){
+            var results=[];
+
+            for(var service in raw){
+
+                if( (options.serverid==-1 || raw[service].sid == options.serverid)
+                    &&(options.proxyid==-1 ||raw[service].iid==options.proxyid)
+                  ){
+                    results.push(raw[service]);
+                  }
+            }
+            //console.log(JSON.stringify(options), raw.length, results)
+            callback && callback(null,results);
+        }
+
         /**
          * Transform the HAProxy CSV into a human-readable JSON
          * @param csv
@@ -156,15 +190,27 @@ var haRemote = function(socketDefinition){
 
             getDatamap(tabCsv,function(map,data){
                 var r = data.map(formatLine(map));
-                organizeStatsObject(r,callback);
+                filterData(r,function(err,filtered){
+                    organizeStatsObject(filtered,callback);
+                })
+
             });
         };
         //get stats for everything
-        haproxy.send('show stat '+options.proxyid+' '+options.types+' '+options.serverid,function(err,data){
-            if(err){return(callback && callback(err));}
-            readCsv(data,callback);
-        });
+
+        readCsv(statCache.data,callback);
     };
+    /* CONSTRUCTOR */
+    var collectStats = function(options,callback){
+        haproxy.send('show stat '+options.proxyid+' '+options.types+' '+options.serverid,callback);
+    };
+    setInterval(function(){
+        collectStats(GLOBAL_STATS_OPTIONS,function(err,data){
+            if(err){return(callback && callback(err));}
+            statCache.data=data;
+            statCache.updated=Date.now();
+        });
+    },CACHE_TTL);
 
     return {
         stats : _stats,
