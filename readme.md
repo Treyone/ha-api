@@ -60,8 +60,8 @@ Returns a JSON formatted view of HAProxy stats
 ## Disable and enable frontend ##
 **REST**
 
-	GET /frontend/[frontend name]/disable
-	GET /frontend/[frontend name]/enable
+	POST /frontend/[frontend name]/disable
+	POST /frontend/[frontend name]/enable
 **Javascript**
 	
 	haapi.frontend('name').disable(callback);
@@ -70,8 +70,8 @@ Returns a JSON formatted view of HAProxy stats
 ## Disable and enable a backend server ##
 **REST**
 
-	GET /backend/[backend name]/server/[server name]/disable
-	GET /backend/[backend name]/server/[server name]/enable
+	POST /backend/[backend name]/server/[server name]/disable
+	POST /backend/[backend name]/server/[server name]/enable
 
 **Javascript**
 	
