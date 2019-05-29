@@ -1,5 +1,11 @@
+
 A NodeJS API for HAProxy.
-Thsi can be used to expose a REST API or to control haproxy from Javascript.
+This can be used to expose a REST API or to control haproxy from Javascript.
+
+
+# DEPRECATION NOTICE
+This project is not maintained anymore. If you want to get ownership, please contact me. Otherwise, you can have a look at [haproxy-sdk](https://github.com/jackpinetech/haproxy-sdk) and [haproxy-api](https://github.com/jackpinetech/haproxy-api)
+
 
 # Usage #
     var HAApi= require('ha-api'),
